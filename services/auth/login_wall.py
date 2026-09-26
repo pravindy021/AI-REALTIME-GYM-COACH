@@ -11,7 +11,7 @@ def render_login_wall():
     st.info("Only registered users can view the app dashboard, weekly plan builder, and live coaching tools.")
 
     with st.form("login_form", clear_on_submit=False):
-        username = st.text_input("Email", placeholder="e.g. pravind@domain.com")
+        username = st.text_input("Email", placeholder="e.g. abcd@gmail.com")
         submit_button = st.form_submit_button("Enter Dashboard", width="stretch")
 
     if submit_button:
