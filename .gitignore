@@ -1,10 +1,60 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment / secrets
 .env
 .env.*
 !.env.example
 .streamlit/secrets.toml
+
+# Local application data
 auth_users.json
 data.db
 feedback_uploads/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+*.egg
+MANIFEST
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.cache/
+.coverage.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+tempCodeRunnerFile.py
+*.log
+
+# Ruff
+.ruff_cache/
+
+# PyInstaller
+*.spec
