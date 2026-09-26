@@ -37,6 +37,27 @@
         <a href="#demo">Demo</a>
         <a href="#contact">Contact</a>
       </div>
+      <div class="nav-actions">
+        <div class="profile-menu">
+          <button
+            class="profile-button"
+            id="profile-button"
+            type="button"
+            aria-label="Open account menu"
+            aria-expanded="false"
+            aria-controls="profile-dropdown"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Zm0 2c-4.08 0-7.4 2.12-7.4 4.73V21h14.8v-2.27C19.4 16.12 16.08 14 12 14Z" />
+            </svg>
+          </button>
+          <div class="profile-dropdown" id="profile-dropdown" hidden>
+            <span class="profile-dropdown-label">Your account</span>
+            <button type="button" data-auth-mode="login">Sign in</button>
+            <button type="button" data-auth-mode="signup">Sign up</button>
+          </div>
+        </div>
+      </div>
     </nav>
 
     <!-- HERO -->
@@ -58,12 +79,12 @@
       </p>
 
       <div class="hero-cta-row">
-        <a
-          href="/app"
+        <button
+          type="button"
           class="btn-primary"
           id="cta-button"
         >
-          <span>Try it live</span>
+          <span>Get started</span>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path
               d="M3 8H13M13 8L9 4M13 8L9 12"
@@ -73,7 +94,7 @@
               stroke-linejoin="round"
             />
           </svg>
-        </a>
+        </button>
         <a href="#demo-video" class="btn-ghost">WATCH DEMO ↓</a>
       </div>
 
@@ -265,36 +286,67 @@
     </section>
 
     <!-- AUTH SECTION -->
-    <section class="auth-section" id="auth">
-      <div class="section-header center-header">
-        <span class="section-tag">// ACCESS</span>
-        <h2 class="section-title">Join the coach<br /><em>in seconds</em></h2>
-        <p class="section-desc">
-          Register with your email or mobile number and log in to continue.
-        </p>
-      </div>
-
-      <div class="auth-grid">
-        <div class="auth-card">
-          <h3>Create account</h3>
-          <form id="register-form" class="auth-form">
-            <input type="text" name="name" placeholder="Full name" required />
-            <input type="email" name="email" placeholder="Email address" required />
-            <input type="tel" name="mobile" placeholder="Mobile number" required />
-            <input type="password" name="password" placeholder="Password" required />
-            <button type="submit">Register</button>
-          </form>
-          <div id="register-status" class="status-message" aria-live="polite"></div>
+    <section class="auth-section" id="auth" aria-hidden="true">
+      <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <button class="auth-close" id="auth-close" type="button" aria-label="Close sign-in dialog">&times;</button>
+        <div class="section-header center-header">
+          <span class="section-tag">// ACCESS</span>
+          <h2 class="section-title" id="auth-title">Join the coach<br /><em>in seconds</em></h2>
+          <p class="section-desc">
+            Register with your email or mobile number and log in to continue.
+          </p>
         </div>
 
-        <div class="auth-card">
-          <h3>Login</h3>
-          <form id="login-form" class="auth-form">
-            <input type="text" name="identifier" placeholder="Email or mobile number" required />
-            <input type="password" name="password" placeholder="Password" required />
-            <button type="submit">Login</button>
-          </form>
-          <div id="login-status" class="status-message" aria-live="polite"></div>
+        <div class="auth-grid">
+          <div class="auth-card" id="signup" hidden>
+            <h3>Create account</h3>
+            <form id="register-form" class="auth-form">
+              <input type="text" name="name" placeholder="Full name" required />
+              <input type="email" name="email" placeholder="Email address" required />
+              <input type="tel" name="mobile" placeholder="Mobile number" required />
+              <input type="password" name="password" placeholder="Password" required />
+              <button type="submit">Register</button>
+            </form>
+            <div id="register-status" class="status-message" aria-live="polite"></div>
+          </div>
+
+          <div class="auth-card" id="login" hidden>
+            <h3>Login</h3>
+            <form id="login-form" class="auth-form">
+              <input type="text" name="identifier" placeholder="Email or mobile number" required />
+              <input type="password" name="password" placeholder="Password" required />
+              <button type="submit">Login</button>
+              <button class="auth-text-button" id="forgot-password-button" type="button" hidden>
+                Forgot password?
+              </button>
+            </form>
+            <div id="login-status" class="status-message" aria-live="polite"></div>
+          </div>
+
+          <div class="auth-card" id="password-reset" hidden>
+            <h3>Reset password</h3>
+            <form id="reset-request-form" class="auth-form">
+              <input type="text" name="identifier" placeholder="Registered email or mobile number" required />
+              <select name="channel" aria-label="Send reset code by">
+                <option value="email" disabled>Send code to registered email</option>
+                <option value="sms" disabled>Send code to registered mobile</option>
+              </select>
+              <small class="auth-hint" id="reset-channel-hint">
+                Checking available reset methods...
+              </small>
+              <button id="reset-request-submit" type="submit" disabled>Send reset code</button>
+            </form>
+            <div id="reset-request-status" class="status-message" aria-live="polite"></div>
+            <form id="reset-confirm-form" class="auth-form" hidden>
+              <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit reset code" required />
+              <input type="password" name="new_password" minlength="8" placeholder="New password (at least 8 characters)" required />
+              <button type="submit">Update password</button>
+            </form>
+            <div id="reset-confirm-status" class="status-message" aria-live="polite"></div>
+            <button class="auth-text-button" id="back-to-login-button" type="button">
+              Back to sign in
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -414,11 +466,167 @@
       const loginForm = document.getElementById('login-form');
       const registerStatus = document.getElementById('register-status');
       const loginStatus = document.getElementById('login-status');
+      const resetRequestForm = document.getElementById('reset-request-form');
+      const resetConfirmForm = document.getElementById('reset-confirm-form');
+      const resetRequestStatus = document.getElementById('reset-request-status');
+      const resetConfirmStatus = document.getElementById('reset-confirm-status');
+      const resetChannel = resetRequestForm.elements.channel;
+      const resetChannelHint = document.getElementById('reset-channel-hint');
+      const resetRequestSubmit = document.getElementById('reset-request-submit');
+      const profileButton = document.getElementById('profile-button');
+      const profileDropdown = document.getElementById('profile-dropdown');
+      const authModal = document.getElementById('auth');
+      const authDialog = authModal.querySelector('.auth-dialog');
+      const authClose = document.getElementById('auth-close');
+      const authTitle = document.getElementById('auth-title');
+      const ctaButton = document.getElementById('cta-button');
+      let activeResetId = '';
+
+      const setProfileMenuOpen = (isOpen) => {
+        profileDropdown.hidden = !isOpen;
+        profileButton.setAttribute('aria-expanded', String(isOpen));
+      };
+
+      const setAuthModalOpen = (mode) => {
+        const isOpen = Boolean(mode);
+        authModal.classList.toggle('is-open', isOpen);
+        authModal.setAttribute('aria-hidden', String(!isOpen));
+        document.body.classList.toggle('auth-modal-open', isOpen);
+
+        if (!isOpen) {
+          return;
+        }
+
+        const isSignup = mode === 'signup';
+        const isReset = mode === 'reset';
+        document.getElementById('signup').hidden = !isSignup;
+        document.getElementById('login').hidden = isSignup || isReset;
+        document.getElementById('password-reset').hidden = !isReset;
+        authTitle.innerHTML = isSignup
+          ? 'Create your account<br /><em>start training</em>'
+          : isReset
+            ? 'Reset your password<br /><em>securely</em>'
+            : 'Welcome back<br /><em>let’s train</em>';
+        setProfileMenuOpen(false);
+        window.setTimeout(() => {
+          const selector = isSignup
+            ? '#signup input'
+            : isReset
+              ? '#reset-request-form input'
+              : '#login input';
+          authDialog.querySelector(selector).focus();
+        }, 0);
+      };
+
+      ctaButton.addEventListener('click', () => setAuthModalOpen('signup'));
+      document.getElementById('forgot-password-button').addEventListener('click', () => {
+        resetRequestForm.elements.identifier.value = loginForm.elements.identifier.value;
+        resetRequestForm.hidden = false;
+        resetConfirmForm.hidden = true;
+        resetRequestStatus.textContent = '';
+        resetConfirmStatus.textContent = '';
+        activeResetId = '';
+        setAuthModalOpen('reset');
+        loadResetMethods();
+      });
+      document.getElementById('back-to-login-button').addEventListener('click', () => {
+        setAuthModalOpen('login');
+      });
+      authClose.addEventListener('click', () => setAuthModalOpen(null));
+      authModal.addEventListener('click', (event) => {
+        if (event.target === authModal) {
+          setAuthModalOpen(null);
+        }
+      });
+
+      profileButton.addEventListener('click', () => {
+        setProfileMenuOpen(profileDropdown.hidden);
+      });
+
+      profileDropdown.addEventListener('click', (event) => {
+        const option = event.target.closest('[data-auth-mode]');
+        if (option) {
+          setAuthModalOpen(option.dataset.authMode);
+        }
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.profile-menu')) {
+          setProfileMenuOpen(false);
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          const menuWasOpen = !profileDropdown.hidden;
+          setProfileMenuOpen(false);
+          if (authModal.classList.contains('is-open')) {
+            setAuthModalOpen(null);
+            profileButton.focus();
+          } else if (menuWasOpen) {
+            profileButton.focus();
+          }
+        }
+      });
 
       const setStatus = (element, message, success) => {
         element.textContent = message;
         element.className = `status-message ${success ? 'success' : 'error'}`;
       };
+
+      const updateResetChannelHint = () => {
+        if (resetChannel.value === 'sms') {
+          resetChannelHint.textContent =
+            'SMS goes to your registered mobile number. Use a number with country code, such as +91 9876543210.';
+        } else {
+          resetChannelHint.textContent = 'The reset code will be sent to your registered email address.';
+        }
+      };
+
+      const loadResetMethods = async () => {
+        resetChannel.disabled = true;
+        resetRequestSubmit.disabled = true;
+        resetChannelHint.textContent = 'Checking available reset methods...';
+
+        try {
+          const response = await fetch('/api/password-reset/methods', { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error('Could not check password reset delivery settings.');
+          }
+
+          const result = await response.json();
+          const emailAvailable = result.methods?.email === true;
+          const smsAvailable = result.methods?.sms === true;
+          const emailOption = resetChannel.querySelector('option[value="email"]');
+          const smsOption = resetChannel.querySelector('option[value="sms"]');
+
+          emailOption.disabled = !emailAvailable;
+          smsOption.disabled = !smsAvailable;
+          if (!emailAvailable && smsAvailable) {
+            resetChannel.value = 'sms';
+          } else {
+            resetChannel.value = 'email';
+          }
+
+          if (!emailAvailable && !smsAvailable) {
+            resetChannelHint.textContent =
+              'Password reset is unavailable: email and SMS delivery are not configured. Contact the site administrator.';
+            resetRequestStatus.textContent = '';
+            return;
+          }
+
+          resetChannel.disabled = false;
+          resetRequestSubmit.disabled = false;
+          resetRequestStatus.textContent = '';
+          updateResetChannelHint();
+        } catch (error) {
+          resetChannelHint.textContent =
+            'Could not check reset delivery settings. Please try again later.';
+          resetRequestStatus.textContent = '';
+        }
+      };
+
+      resetChannel.addEventListener('change', updateResetChannelHint);
 
       registerForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -434,8 +642,15 @@
           const result = await response.json();
 
           if (response.ok) {
-            setStatus(registerStatus, result.message || 'Registration successful.', true);
+            const registeredEmail = payload.email;
             registerForm.reset();
+            loginForm.elements.identifier.value = registeredEmail;
+            setAuthModalOpen('login');
+            setStatus(
+              loginStatus,
+              `${result.message || 'Registration successful.'} Please sign in to continue.`,
+              true
+            );
           } else {
             setStatus(registerStatus, result.message || 'Registration failed.', false);
           }
@@ -459,14 +674,75 @@
 
           if (response.ok) {
             setStatus(loginStatus, result.message || 'Login successful.', true);
+            if (!result.ticket) {
+              setStatus(loginStatus, 'Unable to start your session. Please try again.', false);
+              return;
+            }
             setTimeout(() => {
-              window.location.href = '/app';
+              const params = new URLSearchParams({ ticket: result.ticket });
+              window.location.href = `/app?${params.toString()}`;
             }, 600);
           } else {
             setStatus(loginStatus, result.message || 'Login failed.', false);
+            if (response.status === 401) {
+              document.getElementById('forgot-password-button').hidden = false;
+            }
           }
         } catch (error) {
           setStatus(loginStatus, 'Unable to connect to the server right now.', false);
+        }
+      });
+
+      resetRequestForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const payload = Object.fromEntries(new FormData(resetRequestForm).entries());
+
+        try {
+          const response = await fetch('/api/password-reset/request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json();
+
+          if (response.ok) {
+            activeResetId = result.reset_id;
+            resetRequestForm.hidden = true;
+            resetConfirmForm.hidden = false;
+            setStatus(resetRequestStatus, result.message, true);
+            resetConfirmForm.elements.code.focus();
+          } else {
+            setStatus(resetRequestStatus, result.message || 'Unable to send a reset code.', false);
+          }
+        } catch (error) {
+          setStatus(resetRequestStatus, 'Unable to connect to the server right now.', false);
+        }
+      });
+
+      resetConfirmForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const payload = Object.fromEntries(new FormData(resetConfirmForm).entries());
+        payload.reset_id = activeResetId;
+
+        try {
+          const response = await fetch('/api/password-reset/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json();
+
+          if (response.ok) {
+            loginForm.elements.identifier.value = resetRequestForm.elements.identifier.value;
+            loginForm.elements.password.value = '';
+            document.getElementById('forgot-password-button').hidden = true;
+            setAuthModalOpen('login');
+            setStatus(loginStatus, result.message, true);
+          } else {
+            setStatus(resetConfirmStatus, result.message || 'Unable to reset your password.', false);
+          }
+        } catch (error) {
+          setStatus(resetConfirmStatus, 'Unable to connect to the server right now.', false);
         }
       });
     </script>

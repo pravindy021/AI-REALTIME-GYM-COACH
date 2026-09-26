@@ -1,13 +1,20 @@
 import streamlit as st
 import os
 import time
+import json
+import urllib.error
+import urllib.request
 from dotenv import load_dotenv
 import pandas as pd
 from services.auth.login_wall import render_login_wall
 from services.state.session_defaults import initial_session_defaults
 from services.config.workout_config import EXERCISE_OPTIONS
 from services.ui.style_loader import load_css, inject_local_font, inject_webrtc_styles
-from services.persistence.exercise_repository import init_db, get_user_plan
+from services.persistence.exercise_repository import (
+    get_or_create_user,
+    get_user_plan,
+    init_db,
+)
 try:
     from streamlit_webrtc import webrtc_streamer, WebRtcMode  # type: ignore
 except ImportError:
@@ -23,6 +30,33 @@ from services.coaching.voice_pipeline import VoicePipeline, autoplay_audio
 from services.coaching.dashboard_plan import build_day_tip, render_dashboard
 
 
+def redeem_frontend_login(ticket):
+    request = urllib.request.Request(
+        "http://127.0.0.1:8000/api/redeem",
+        data=json.dumps({"ticket": ticket}).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=5) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as error:
+        if error.code == 401:
+            raise ValueError("Your login link expired. Please sign in again.") from error
+        raise ValueError("Could not verify your login. Please try again.") from error
+    except (urllib.error.URLError, TimeoutError) as error:
+        raise ValueError("Could not connect to the login server. Please try again.") from error
+
+    user = payload.get("user")
+    if payload.get("ok") is not True or not isinstance(user, dict):
+        raise ValueError("Could not verify your login. Please try again.")
+    if not all(isinstance(user.get(field), str) and user[field] for field in ("name", "email")):
+        raise ValueError("The login server returned an invalid account.")
+
+    return user
+
+
 def main():
     st.set_page_config(
         page_icon="🏋️‍♀️",
@@ -36,8 +70,24 @@ def main():
 
     init_db()
 
-    if not render_login_wall():
-        return 
+    if st.session_state.get("user_id") is None:
+        ticket = st.query_params.get("ticket")
+        if ticket:
+            st.query_params.clear()
+            try:
+                frontend_user = redeem_frontend_login(ticket)
+            except ValueError as error:
+                st.error(str(error))
+                st.link_button("Return to sign in", "http://127.0.0.1:8000/#auth")
+                return
+
+            user = get_or_create_user(frontend_user["email"])
+            st.session_state["user_id"] = user["id"]
+            st.session_state["username"] = frontend_user["email"]
+            st.session_state["auth_ready"] = True
+            st.rerun()
+        elif not render_login_wall():
+            return
     
     initial_session_defaults()
 
