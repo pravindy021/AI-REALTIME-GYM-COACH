@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#0f172a"/>
+  <rect x="60" y="60" width="680" height="480" rx="24" fill="#111827" stroke="#38bdf8" stroke-width="4"/>
+  <circle cx="400" cy="300" r="120" fill="#1e293b" stroke="#f8fafc" stroke-width="6"/>
+  <path d="M300 380c34-76 166-76 200 0" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+  <rect x="250" y="210" width="300" height="24" rx="12" fill="#f8fafc"/>
+  <text x="400" y="470" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" fill="#f8fafc">AI GYM COACH</text>
+</svg>
